@@ -1,0 +1,86 @@
+@import "./header.css";
+@import "gallery.css";
+@import "./footer.css";
+
+/* ------------------------- */
+/* Page Structure */
+/* ------------------------- */
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 350px 100px 1fr 150px;
+    grid-template-areas: "hd" "sd" "main" "ft";
+}
+
+@media screen and (min-width: 768px) {
+    .container {
+        /* Step 1: Set display to grid */
+        display: grid;
+        /* Step 2: setup rows amd columns */
+        grid-template-columns: 1fr;
+        grid-template-rows: 500px 70px 1fr 200px;
+        grid-template-areas: "hd" "sd" "main" "ft";
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    .container {
+        /* Step 1: Set display to grid */
+        display: grid;
+        /* Step 2: setup rows amd columns */
+        grid-template-columns: 320px 320px 320px 320px 320px 320px;
+        grid-template-rows: 550px 1fr 200px;
+        grid-template-areas: "hd hd hd hd hd hd" "main main main main main sd" "ft ft ft ft ft ft";
+        border: 2px solid white;
+    }
+}
+
+header {
+    grid-area: hd;
+}
+
+footer {
+    grid-area: ft;
+}
+
+#sidebar {
+    grid-area: sd;
+}
+
+main {
+    grid-area: main;
+}
+
+/* ------------------------- */
+/* General Settings */
+/* ------------------------- */
+
+body {
+    font: normal 22px "Crimson Pro", serif;
+    line-height: 32px;
+}
+
+p {
+    margin: 10px 10px 10px;
+}
+
+h1 {
+    color: white;
+    margin: 20px 20px;
+}
+
+h2 {
+    margin: 20px 10px;
+}
+
+.list-items > a {
+    text-decoration: none;
+    color: black;
+}
+
+.flex-container {
+    display: flex;
+}
+
+

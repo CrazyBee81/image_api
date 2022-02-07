@@ -1,0 +1,166 @@
+@import "header.css";
+@import "gallery.css";
+@import "footer.css";
+
+
+/* ------------------------- */
+/* General Settings */
+/* ------------------------- */
+
+body {
+    font: normal 22px "Crimson Pro", serif;
+    line-height: 32px;
+}
+
+p {
+    margin: 0 10px;
+}
+
+.small-paragraph {
+    font-size: 0.75rem;
+}
+
+h1 {
+    color: white;
+    margin: 20px 20px;
+}
+
+h2 {
+    margin: 20px 10px 0px;
+}
+
+blockquote {
+    font-style: italic;
+}
+
+.list-items > a {
+    text-decoration: none;
+    color: black;
+}
+
+.flex-container {
+    display: flex;
+}
+
+
+/* ------------------------- */
+/* Page Structure */
+/* ------------------------- */
+
+.container {
+    /* Step 1: Set display to grid */
+    display: grid;
+    /* Step 2: setup rows amd columns */
+    grid-template-columns: 360px;
+    grid-template-rows: 350px 100px 1fr 150px;
+    grid-template-areas: "hd" "sd" "main" "ft";
+    border: 2px solid white;
+}
+
+@media screen and (min-width: 768px) {
+    .container {
+        /* Step 1: Set display to grid */
+        display: grid;
+        /* Step 2: setup rows amd columns */
+        grid-template-columns: 768px;
+        grid-template-rows: 550px 70px 1fr 200px;
+        grid-template-areas: "hd" "sd" "main" "ft";
+        border: 2px solid white;
+    }
+}
+
+@media screen and (min-width: 1280px) {
+    .container {
+        /* Step 1: Set display to grid */
+        display: grid;
+        /* Step 2: setup rows amd columns */
+        grid-template-columns: 320px 320px 320px 320px;
+        grid-template-rows: 550px 70px 1fr 200px;
+        grid-template-areas: "hd hd hd hd" "sd sd sd sd" "main main main main" "ft ft ft ft";
+        border: 2px solid white;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    .container {
+        /* Step 1: Set display to grid */
+        display: grid;
+        /* Step 2: setup rows amd columns */
+        grid-template-columns: 320px 320px 320px 320px 320px 320px;
+        grid-template-rows: 550px 1fr 200px;
+        grid-template-areas: "hd hd hd hd hd hd" "main main main main main sd" "ft ft ft ft ft ft";
+        border: 2px solid white;
+    }
+}
+
+header {
+    grid-area: hd;
+}
+
+footer {
+    grid-area: ft;
+}
+
+#sidebar {
+    grid-area: sd;
+}
+
+main {
+    grid-area: main;
+}
+
+.box {
+    width: 100vw
+}
+
+/* ------------------------- */
+/* Article */
+/* ------------------------- */
+
+.inflow-image {
+    float: right;
+    height: 380px;
+    width: 300px;
+    box-shadow: 1px 1px 10px 1px rgba(0, 0, 0, 0.2);
+}
+
+.inflow-image > img {
+    height: 300px;
+    width: 300px;
+}
+
+figcaption {
+    text-align: center;
+}
+
+#newsletter-box {
+    width: 300px;
+    height: 250px;
+    float: right;
+    background-color: aliceblue;
+    margin: auto;
+}
+
+.newsletter {
+    text-align: center;
+}
+
+@media screen and (min-width: 1280px) {
+    #newsletter-box {
+        float: right;
+    }
+
+}
+
+@media screen and (max-width: 900px) {
+    #newsletter-box {
+        float: unset;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    main {
+        width: unset !important;
+    }
+}
+
