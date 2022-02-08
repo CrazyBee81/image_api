@@ -61,7 +61,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Import Express to run index and routes
 var express_1 = __importDefault(require("express"));
 var path = __importStar(require("path"));
-var jimp_1 = __importDefault(require("jimp"));
+var sharp_1 = __importDefault(require("sharp"));
 // Setup the router
 var images = express_1.default.Router();
 // Get rout for image url
@@ -69,37 +69,51 @@ images.get('/', function (req, res) {
     var fileDirectory = path.resolve('../image_api/src/images/');
     function processing() {
         return __awaiter(this, void 0, void 0, function () {
-            var image, height, width, filename, e_1;
+            var height, width, filename, image, newImageName, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, jimp_1.default.read("".concat(fileDirectory, "/").concat(req.query.filename, ".jpg"))
-                            // get query params
-                        ];
+                        _a.trys.push([0, 5, , 6]);
+                        height = typeof req.query.height === "string" && req.query.height !== "" && typeof req.query.height !== "undefined" ? parseInt(req.query.height) : 400;
+                        width = typeof req.query.width === "string" && req.query.width !== "" && typeof req.query.width !== "undefined" ? parseInt(req.query.width) : 400;
+                        filename = typeof req.query.filename === "string" && req.query.filename !== "" ? req.query.filename : "warning";
+                        return [4 /*yield*/, (0, sharp_1.default)("".concat(fileDirectory, "/").concat(filename, ".jpg"))];
                     case 1:
                         image = _a.sent();
-                        height = typeof req.query.height === "string" && typeof req.query.height !== "undefined" ? parseInt(req.query.height) : 400;
-                        width = typeof req.query.width === "string" && typeof req.query.height !== "undefined" ? parseInt(req.query.width) : 400;
-                        filename = typeof req.query.filename === "string" ? req.query.filename : "warning";
+                        if (!(filename !== "warning")) return [3 /*break*/, 3];
+                        newImageName = "".concat(filename, "_").concat(width, "_").concat(height);
                         // resize
-                        image.resize(width, height, function (err) {
-                            if (err)
-                                throw err;
-                        })
-                            .quality(60) // change quality
-                            .write("".concat(fileDirectory, "/").concat(filename, "_thumb.jpg")); // write new file
-                        res.sendFile("".concat(filename, "_thumb.jpg"), { root: fileDirectory }, function (err) {
+                        return [4 /*yield*/, image.resize(width, height)
+                                .toFile("".concat(fileDirectory, "/").concat(newImageName, ".jpg"), function (err) {
+                                if (err)
+                                    throw err;
+                            })];
+                    case 2:
+                        // resize
+                        _a.sent(); // containing a scaled and cropped version of input.jpg
+                        res.status(200)
+                            .set('Cache-Control', 'public, max-age=900000')
+                            .cookie('cookie_name', newImageName, { maxAge: 900000 })
+                            .sendFile("".concat(newImageName, ".jpg"), { root: fileDirectory }, function (err) {
+                            res.status(500);
                             res.end();
                             if (err)
                                 throw (err);
                         });
-                        return [3 /*break*/, 3];
-                    case 2:
+                        return [3 /*break*/, 4];
+                    case 3:
+                        res.status(400).sendFile("warning.jpg", { root: fileDirectory }, function (err) {
+                            res.status(500).end();
+                            if (err)
+                                throw (err);
+                        });
+                        _a.label = 4;
+                    case 4: return [3 /*break*/, 6];
+                    case 5:
                         e_1 = _a.sent();
-                        res.send("could not process query");
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        res.status(400).send("could not process query");
+                        return [3 /*break*/, 6];
+                    case 6: return [2 /*return*/];
                 }
             });
         });
