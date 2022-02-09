@@ -144,10 +144,22 @@ describe('Test if files are been processed and delivered', function () {
         });
     }); });
 });
-describe('Test if files are been processed and delivered', function () {
+describe('Test of error handling', function () {
     // Setup test image
     var fileDirectory = path.resolve('../image_api/src/images/');
-    it('missing query params return erro message', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('returns an error message file not found', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var response;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, request.get('/api/images?filename=')];
+                case 1:
+                    response = _a.sent();
+                    expect(response.status).toBe(404);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('shoud return an error message file not found', function () { return __awaiter(void 0, void 0, void 0, function () {
         var response;
         return __generator(this, function (_a) {
             switch (_a.label) {
