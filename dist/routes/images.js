@@ -66,7 +66,7 @@ var sharp_1 = __importDefault(require("sharp"));
 var images = express_1.default.Router();
 // Get rout for image url
 images.get('/', function (req, res) {
-    var fileDirectory = path.resolve('../image_api/src/images/');
+    var fileDirectory = path.resolve("".concat(process.cwd(), "/images/"));
     function processing() {
         return __awaiter(this, void 0, void 0, function () {
             var height, width, filename, image, newImageName, e_1;

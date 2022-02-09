@@ -9,7 +9,7 @@ const images = express.Router();
 
 // Get rout for image url
 images.get('/', (req, res) => {
-    const fileDirectory = path.resolve('../image_api/src/images/');
+    const fileDirectory = path.resolve(`${process.cwd()}/images/`);
 
     async function processing() {
         try {
