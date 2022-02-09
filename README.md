@@ -10,10 +10,25 @@ git clone https://github.com/CrazyBee81/image_api.git
 npm install
 ```
 
-# Usage and Contribution
+# Usage 
+In order to start the project, there have been scripts set up to build and start the project
+
+```
+npm run build
+npm run start
+```
+
+After that, the project runs on localhost:3000 and the image endpoint can be reached. Just add a query string with parameters for filename, width, and height to process an image.
+
+E.g.
+(http://localhost:3000/api/images?filename=friends&width=300&height=250)
+
+After the image has been processed, it will be saved in the backend folder and cached in your browser to reduce page load.
+
+# Contribution
 For the purpose of training, this project is showing a still easy but highly scalable professional environment. As such, industry best practices for safe coding have been applied to keep the code easily readable, maintainable, and less error-prone. 
 
-There are still some opportunities left to contribute to this project. For example, sharp offers to add additional styling to images being processed by the api. When doing this, please make sure to use
+There are still some opportunities left to contribute to this project.  For example, sharp offers to add additional styling to images, usage for other formats, or a logger middleware could be implemented. When doing this, please make sure to use
 
 *   TypeScript: To reduce developer errors
 * 	Prettier: To make sure all contributors will format the code in a consistent way. 
