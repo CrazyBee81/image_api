@@ -1,5 +1,5 @@
 // Import Express to run index and routes
-import express from 'express';
+import express, { Request, Response } from 'express';
 import * as path from 'path';
 import sharp from 'sharp';
 import {type} from "os";
@@ -8,20 +8,20 @@ import {type} from "os";
 const images = express.Router();
 
 // Get rout for image url
-images.get('/', (req, res) => {
-    const fileDirectory = path.resolve(`${process.cwd()}/images/`);
+images.get('/', (req:Request, res:Response):void => {
+    const fileDirectory = path.join(process.cwd(), '/images');
 
-    async function processing() {
+    const processing = async ():Promise<void> => {
         try {
             // get query params
-            let height: (number | string) = typeof req.query.height === "string" && req.query.height !== ""? parseInt(req.query.height) : 0;
-            let width: (number | string) = typeof req.query.width === "string" && req.query.width !== ""? parseInt(req.query.width) : 0;
+            let height: (number) = typeof req.query.height === "string" && req.query.height !== ""? parseInt(req.query.height) : 0;
+            let width: (number) = typeof req.query.width === "string" && req.query.width !== ""? parseInt(req.query.width) : 0;
             let filename: (string) = typeof req.query.filename === "string" && req.query.filename !== "" ? req.query.filename : "no filename";
 
             const image = await sharp(`${fileDirectory}/${filename}.jpg`);
 
-            if (filename !== "no filename" && width > 0 && height > 0) {
-                let newImageName = `${filename}_${width}_${height}`
+            if ((filename !== "no filename") && width > 0 && height > 0) {
+                let newImageName: string = `${filename}_${width}_${height}`
                 // resize
                 await image.resize(width, height)
                     .toFile(`${fileDirectory}/${newImageName}.jpg`
