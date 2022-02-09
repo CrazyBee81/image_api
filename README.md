@@ -1,6 +1,6 @@
 
 # Image API
-This project is a part of the Udacity course "Fullstack JavaScript Developer". It shows the student's capability to put up an express server and to develop a simple API service. The image API allows you to place images into your frontend with the size set via URL parameter. The second use case is as a library to serve properly scaled versions of your images to the front end to reduce page load size 
+This project is a part of the Udacity course [Fullstack JavaScript Developer](https://www.udacity.com/course/full-stack-web-developer-nanodegree--nd0044?utm_source=gsem_brand&utm_medium=ads_r&utm_campaign=12906460312_c&utm_term=121838875139&utm_keyword=udacity%20full%20stack_e&gclid=CjwKCAiA6Y2QBhAtEiwAGHybPUmccrsABtsCa7uMT0xMnVqqCSdzpsdC1W7hfHn8T-qz8iIGznUmbhoCLPUQAvD_BwE). It shows the student's capability to put up an express server and to develop a simple API service. The image API allows you to place images into your frontend with the size set via URL parameter. The second use case is as a library to serve properly scaled versions of your images to the front end to reduce page load size 
 
 # Installation
 To clone the project locally and to install all dependencies on your computer, type or copy the following commands into your terminal. 
