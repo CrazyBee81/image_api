@@ -74,20 +74,17 @@ images.get('/', function (req, res) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 5, , 6]);
-                        height = typeof req.query.height === "string" && req.query.height !== "" && typeof req.query.height !== "undefined" ? parseInt(req.query.height) : 400;
-                        width = typeof req.query.width === "string" && req.query.width !== "" && typeof req.query.width !== "undefined" ? parseInt(req.query.width) : 400;
-                        filename = typeof req.query.filename === "string" && req.query.filename !== "" ? req.query.filename : "warning";
+                        height = typeof req.query.height === "string" && req.query.height !== "" ? parseInt(req.query.height) : 0;
+                        width = typeof req.query.width === "string" && req.query.width !== "" ? parseInt(req.query.width) : 0;
+                        filename = typeof req.query.filename === "string" && req.query.filename !== "" ? req.query.filename : "no filename";
                         return [4 /*yield*/, (0, sharp_1.default)("".concat(fileDirectory, "/").concat(filename, ".jpg"))];
                     case 1:
                         image = _a.sent();
-                        if (!(filename !== "warning")) return [3 /*break*/, 3];
+                        if (!(filename !== "no filename" && width > 0 && height > 0)) return [3 /*break*/, 3];
                         newImageName = "".concat(filename, "_").concat(width, "_").concat(height);
                         // resize
                         return [4 /*yield*/, image.resize(width, height)
-                                .toFile("".concat(fileDirectory, "/").concat(newImageName, ".jpg"), function (err) {
-                                if (err)
-                                    throw err;
-                            })];
+                                .toFile("".concat(fileDirectory, "/").concat(newImageName, ".jpg"))]; // containing a scaled and cropped version of input.jpg
                     case 2:
                         // resize
                         _a.sent(); // containing a scaled and cropped version of input.jpg
@@ -102,16 +99,17 @@ images.get('/', function (req, res) {
                         });
                         return [3 /*break*/, 4];
                     case 3:
-                        res.status(400).sendFile("warning.jpg", { root: fileDirectory }, function (err) {
-                            res.status(500).end();
-                            if (err)
-                                throw (err);
-                        });
+                        if (filename === "no filename") {
+                            res.status(404).send("404 - file not found");
+                        }
+                        else {
+                            res.status(400).send("400 - Bad Request");
+                        }
                         _a.label = 4;
                     case 4: return [3 /*break*/, 6];
                     case 5:
                         e_1 = _a.sent();
-                        res.status(400).send("could not process query");
+                        res.status(400).send("400 - Bad Request");
                         return [3 /*break*/, 6];
                     case 6: return [2 /*return*/];
                 }

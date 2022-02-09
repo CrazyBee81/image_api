@@ -15,7 +15,4 @@ app.listen(port, function () {
 });
 // GET route
 app.use('/api', index_1.default);
-var myFunc = function (num) {
-    return num * num;
-};
-exports.default = myFunc;
+exports.default = app;

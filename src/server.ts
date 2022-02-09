@@ -8,14 +8,10 @@ const app = express();
 // Setup a port for the server
 const port = 3000;
 app.listen(port, () => {
-    console.log(`server started at localhost:${port}`)
+  console.log(`server started at localhost:${port}`);
 });
 
 // GET route
-app.use('/api', routes)
+app.use('/api', routes);
 
-const myFunc = (num: number): number => {
-    return num * num;
-};
-
-export default myFunc;
+export default app;
