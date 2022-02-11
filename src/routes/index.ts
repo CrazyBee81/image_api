@@ -1,12 +1,12 @@
 // Import Express to run index and routes
-import express, { Request, Response } from 'express';
+import express from 'express';
 import images from './images';
 
 // Setup the router
 const routes = express.Router();
 
 // Get main route
-routes.get('/', (req:Request, res: Response):void => {
+routes.get('/', (req, res) => {
     res.send('main route');
 });
 

@@ -1,53 +1,50 @@
 // Import Express to run index and routes
-import express, { Request, Response } from 'express';
+import express from 'express';
 import * as path from 'path';
-import sharp from 'sharp';
-import {type} from "os";
+import {transformeImage} from '../utilities/imageTransformer';
+import {checkFileExists} from '../utilities/fileChecker';
 
 // Setup the router
 const images = express.Router();
 
 // Get rout for image url
-images.get('/', (req:Request, res:Response):void => {
-    const fileDirectory = path.join(process.cwd(), '/images');
+images.get('/', async (req: express.Request, res: express.Response): Promise<void> => {
+    // get query params
+    const height: (number | null) = parseInt(req.query.height as unknown as string) || null;
+    const width: (number | null) = parseInt(req.query.width as unknown as string) || null;
+    const filename: (string) = req.query.filename as string;
 
-    const processing = async ():Promise<void> => {
-        try {
-            // get query params
-            let height: (number) = typeof req.query.height === "string" && req.query.height !== ""? parseInt(req.query.height) : 0;
-            let width: (number) = typeof req.query.width === "string" && req.query.width !== ""? parseInt(req.query.width) : 0;
-            let filename: (string) = typeof req.query.filename === "string" && req.query.filename !== "" ? req.query.filename : "no filename";
+    // set path and name for files
+    const fileDirectory: string = path.join(process.cwd(), `/images/`);
+    const inputFile: string = `${filename}.jpg`
+    const outputFile: string = `${filename}_${width}_${height}.jpg`
+    const exists = await checkFileExists(fileDirectory, inputFile);
 
-            const image = await sharp(`${fileDirectory}/${filename}.jpg`);
-
-            if ((filename !== "no filename") && width > 0 && height > 0) {
-                let newImageName: string = `${filename}_${width}_${height}`
-                // resize
-                await image.resize(width, height)
-                    .toFile(`${fileDirectory}/${newImageName}.jpg`
-                    ) // containing a scaled and cropped version of input.jpg
-
+    // send server response for route
+    if (exists) {
+        if (width === null || height === null) {
+            res.status(400).send("400 - Bad Request. Please set query parameters for width and height");
+        } else if (width < 0 || height < 0) {
+            res.status(400).send("400 - Bad Request. Parameters for width and height must be positive");
+        } else {
+            const transformed = await transformeImage(height, width, fileDirectory, inputFile, outputFile);
+            if (transformed) {
                 res.status(200)
                     .set('Cache-Control', 'public, max-age=900000')
-                    .cookie('cookie_name', newImageName, {maxAge: 900000})
-                    .sendFile(`${newImageName}.jpg`, {root: fileDirectory}, (err) => {
+                    .cookie('cookie_name', `friends`, {maxAge: 900000})
+                    .sendFile(outputFile, {root: fileDirectory}, (err) => {
                         res.status(500)
                         res.end();
                         if (err) throw(err);
-                    });
-            } else if (filename === "no filename") {
-                res.status(404).send("404 - file not found");
+                    })
             } else {
-                res.status(400).send("400 - Bad Request");
+                res.status(500).send("500 - Internal Server Error");
             }
-
-        } catch (e) {
-            res.status(400).send("400 - Bad Request")
         }
+    } else {
+        res.status(400).send("400 - Bad Request. File not found, check filename");
     }
+})
 
-    processing();
-
-});
 
 export default images;

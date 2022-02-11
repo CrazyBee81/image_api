@@ -61,59 +61,58 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Import Express to run index and routes
 var express_1 = __importDefault(require("express"));
 var path = __importStar(require("path"));
-var sharp_1 = __importDefault(require("sharp"));
+var image_resizer_1 = require("../utilities/image_resizer");
+var fileChecker_1 = require("../utilities/fileChecker");
 // Setup the router
 var images = express_1.default.Router();
 // Get rout for image url
-images.get('/', function (req, res) {
-    var fileDirectory = path.join(process.cwd(), '/images');
-    var processing = function () { return __awaiter(void 0, void 0, void 0, function () {
-        var height, width, filename, image, newImageName, e_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 5, , 6]);
-                    height = typeof req.query.height === "string" && req.query.height !== "" ? parseInt(req.query.height) : 0;
-                    width = typeof req.query.width === "string" && req.query.width !== "" ? parseInt(req.query.width) : 0;
-                    filename = typeof req.query.filename === "string" && req.query.filename !== "" ? req.query.filename : "no filename";
-                    return [4 /*yield*/, (0, sharp_1.default)("".concat(fileDirectory, "/").concat(filename, ".jpg"))];
-                case 1:
-                    image = _a.sent();
-                    if (!((filename !== "no filename") && width > 0 && height > 0)) return [3 /*break*/, 3];
-                    newImageName = "".concat(filename, "_").concat(width, "_").concat(height);
-                    // resize
-                    return [4 /*yield*/, image.resize(width, height)
-                            .toFile("".concat(fileDirectory, "/").concat(newImageName, ".jpg"))]; // containing a scaled and cropped version of input.jpg
-                case 2:
-                    // resize
-                    _a.sent(); // containing a scaled and cropped version of input.jpg
+images.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var height, width, filename, fileDirectory, inputFile, outputFile, exists, transformed;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                height = parseInt(req.query.height) || null;
+                ;
+                width = parseInt(req.query.width) || null;
+                filename = req.query.filename;
+                fileDirectory = path.join(process.cwd(), "/images/");
+                inputFile = "".concat(filename, ".jpg");
+                outputFile = "".concat(filename, "_").concat(width, "_").concat(height, ".jpg");
+                return [4 /*yield*/, (0, fileChecker_1.checkFileExists)(fileDirectory, inputFile)];
+            case 1:
+                exists = _a.sent();
+                if (!exists) return [3 /*break*/, 6];
+                if (!(width === null || height === null)) return [3 /*break*/, 2];
+                res.status(400).send("400 - Bad Request. Please set query parameters for width and height");
+                return [3 /*break*/, 5];
+            case 2:
+                if (!(width < 0 || height < 0)) return [3 /*break*/, 3];
+                res.status(400).send("400 - Bad Request. Parameters for width and height must be positive");
+                return [3 /*break*/, 5];
+            case 3: return [4 /*yield*/, (0, image_resizer_1.transformeImage)(height, width, fileDirectory, inputFile, outputFile)];
+            case 4:
+                transformed = _a.sent();
+                if (transformed) {
                     res.status(200)
                         .set('Cache-Control', 'public, max-age=900000')
-                        .cookie('cookie_name', newImageName, { maxAge: 900000 })
-                        .sendFile("".concat(newImageName, ".jpg"), { root: fileDirectory }, function (err) {
+                        .cookie('cookie_name', "friends", { maxAge: 900000 })
+                        .sendFile(outputFile, { root: fileDirectory }, function (err) {
                         res.status(500);
                         res.end();
                         if (err)
                             throw (err);
                     });
-                    return [3 /*break*/, 4];
-                case 3:
-                    if (filename === "no filename") {
-                        res.status(404).send("404 - file not found");
-                    }
-                    else {
-                        res.status(400).send("400 - Bad Request");
-                    }
-                    _a.label = 4;
-                case 4: return [3 /*break*/, 6];
-                case 5:
-                    e_1 = _a.sent();
-                    res.status(400).send("400 - Bad Request");
-                    return [3 /*break*/, 6];
-                case 6: return [2 /*return*/];
-            }
-        });
-    }); };
-    processing();
-});
+                }
+                else {
+                    res.status(500).send("500 - Internal Server Error");
+                }
+                _a.label = 5;
+            case 5: return [3 /*break*/, 7];
+            case 6:
+                res.status(400).send("400 - Bad Request. File not found");
+                _a.label = 7;
+            case 7: return [2 /*return*/];
+        }
+    });
+}); });
 exports.default = images;
