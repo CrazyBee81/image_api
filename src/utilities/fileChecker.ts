@@ -5,7 +5,7 @@ const checkFileExists = async (
   inputFile: string
 ): Promise<boolean> => {
   try {
-    let imageResponse = await fsPromises.open(`${directory}/${inputFile}`, 'r');
+    await fsPromises.open(`${directory}/${inputFile}`, 'r');
     return true;
   } catch (error) {
     return false;

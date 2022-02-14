@@ -1,6 +1,5 @@
 import supertest from 'supertest';
 import app from '../server';
-import * as path from 'path';
 
 const request = supertest(app);
 

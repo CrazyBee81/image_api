@@ -18,8 +18,8 @@ images.get('/',async (req:express.Request, res:express.Response):Promise<void> =
 
     // set path and name for files
     const fileDirectory: string = path.join(process.cwd(), `/images/`);
-    const inputFile: string = `${filename}.jpg`;
-    const outputFile: string = `${filename}_${width}_${height}.jpg`;
+    const inputFile: string = `${filename}.jpg` as string;
+    const outputFile: string = `${filename}_${width}_${height}.jpg` as string;
     const exists = await checkFileExists(fileDirectory, inputFile);
 
     // send server response for route

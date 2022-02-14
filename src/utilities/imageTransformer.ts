@@ -1,5 +1,3 @@
-import express from 'express';
-import * as path from 'path';
 import sharp from 'sharp';
 
 // Get rout for image url
