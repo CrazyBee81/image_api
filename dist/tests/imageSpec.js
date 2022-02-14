@@ -58,60 +58,61 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// Import Express to run index and routes
-var express_1 = __importDefault(require("express"));
+var supertest_1 = __importDefault(require("supertest"));
+var server_1 = __importDefault(require("../server"));
 var path = __importStar(require("path"));
-var imageTransformer_1 = require("../utilities/imageTransformer");
-var fileChecker_1 = require("../utilities/fileChecker");
-// Setup the router
-var images = express_1.default.Router();
-// Get rout for image url
-images.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var height, width, filename, fileDirectory, inputFile, outputFile, exists, transformed;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                height = parseInt(req.query.height) || null;
-                width = parseInt(req.query.width) || null;
-                filename = req.query.filename;
-                fileDirectory = path.join(process.cwd(), "/images/");
-                inputFile = "".concat(filename, ".jpg");
-                outputFile = "".concat(filename, "_").concat(width, "_").concat(height, ".jpg");
-                return [4 /*yield*/, (0, fileChecker_1.checkFileExists)(fileDirectory, inputFile)];
-            case 1:
-                exists = _a.sent();
-                if (!exists) return [3 /*break*/, 6];
-                if (!(width === null || height === null)) return [3 /*break*/, 2];
-                res.status(400).send("400 - Bad Request. Please set query parameters for width and height");
-                return [3 /*break*/, 5];
-            case 2:
-                if (!(width < 0 || height < 0)) return [3 /*break*/, 3];
-                res.status(400).send("400 - Bad Request. Parameters for width and height must be positive");
-                return [3 /*break*/, 5];
-            case 3: return [4 /*yield*/, (0, imageTransformer_1.transformeImage)(height, width, fileDirectory, inputFile, outputFile)];
-            case 4:
-                transformed = _a.sent();
-                if (transformed) {
-                    res.status(200)
-                        .set('Cache-Control', 'public, max-age=900000')
-                        .cookie('cookie_name', "friends", { maxAge: 900000 })
-                        .sendFile(outputFile, { root: fileDirectory }, function (err) {
-                        res.status(500);
-                        res.end();
-                        if (err)
-                            throw (err);
-                    });
-                }
-                else {
-                    res.status(500).send("500 - Internal Server Error");
-                }
-                _a.label = 5;
-            case 5: return [3 /*break*/, 7];
-            case 6:
-                res.status(400).send("400 - Bad Request. File not found, check filename");
-                _a.label = 7;
-            case 7: return [2 /*return*/];
-        }
-    });
-}); });
-exports.default = images;
+var request = (0, supertest_1.default)(server_1.default);
+describe('Test endpoint response status', function () {
+    var fileDirectory = path.join(process.cwd(), "/images/");
+    it('gets the api endpoint', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var response;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, request.get('/api')];
+                case 1:
+                    response = _a.sent();
+                    expect(response.status).toBe(200);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('sends an response and a file in jpg format', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var response;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, request.get('/api/images?filename=friends&width=1&height=1')];
+                case 1:
+                    response = _a.sent();
+                    expect(response.get('Content-Type')).toBe("image/jpeg");
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+});
+describe('Test of error handling', function () {
+    it('returns an error message when query is missing', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var response;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, request.get('/api/images')];
+                case 1:
+                    response = _a.sent();
+                    expect(response.status).toBe(400);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('returns an error message filename is missing', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var response;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, request.get('/api/images?filename=')];
+                case 1:
+                    response = _a.sent();
+                    console.log(response.body);
+                    expect(response.status).toBe(400);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+});

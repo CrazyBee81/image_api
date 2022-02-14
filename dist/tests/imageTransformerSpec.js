@@ -54,64 +54,74 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-// Import Express to run index and routes
-var express_1 = __importDefault(require("express"));
-var path = __importStar(require("path"));
 var imageTransformer_1 = require("../utilities/imageTransformer");
 var fileChecker_1 = require("../utilities/fileChecker");
-// Setup the router
-var images = express_1.default.Router();
-// Get rout for image url
-images.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var height, width, filename, fileDirectory, inputFile, outputFile, exists, transformed;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                height = parseInt(req.query.height) || null;
-                width = parseInt(req.query.width) || null;
-                filename = req.query.filename;
-                fileDirectory = path.join(process.cwd(), "/images/");
-                inputFile = "".concat(filename, ".jpg");
-                outputFile = "".concat(filename, "_").concat(width, "_").concat(height, ".jpg");
-                return [4 /*yield*/, (0, fileChecker_1.checkFileExists)(fileDirectory, inputFile)];
-            case 1:
-                exists = _a.sent();
-                if (!exists) return [3 /*break*/, 6];
-                if (!(width === null || height === null)) return [3 /*break*/, 2];
-                res.status(400).send("400 - Bad Request. Please set query parameters for width and height");
-                return [3 /*break*/, 5];
-            case 2:
-                if (!(width < 0 || height < 0)) return [3 /*break*/, 3];
-                res.status(400).send("400 - Bad Request. Parameters for width and height must be positive");
-                return [3 /*break*/, 5];
-            case 3: return [4 /*yield*/, (0, imageTransformer_1.transformeImage)(height, width, fileDirectory, inputFile, outputFile)];
-            case 4:
-                transformed = _a.sent();
-                if (transformed) {
-                    res.status(200)
-                        .set('Cache-Control', 'public, max-age=900000')
-                        .cookie('cookie_name', "friends", { maxAge: 900000 })
-                        .sendFile(outputFile, { root: fileDirectory }, function (err) {
-                        res.status(500);
-                        res.end();
-                        if (err)
-                            throw (err);
-                    });
-                }
-                else {
-                    res.status(500).send("500 - Internal Server Error");
-                }
-                _a.label = 5;
-            case 5: return [3 /*break*/, 7];
-            case 6:
-                res.status(400).send("400 - Bad Request. File not found, check filename");
-                _a.label = 7;
-            case 7: return [2 /*return*/];
-        }
-    });
-}); });
-exports.default = images;
+var fs_1 = require("fs");
+var path = __importStar(require("path"));
+var Input = /** @class */ (function () {
+    function Input() {
+        this.fileDirectory = path.join(process.cwd(), "/images/");
+        this.inputFile = "friends.jpg";
+        this.outputFile = 'friends_1_1.jpg';
+        this.height = 1;
+        this.width = 1;
+    }
+    Input.prototype.create = function () {
+        this.fileDirectory;
+        this.height;
+    };
+    return Input;
+}());
+var testInput = new Input;
+describe('Test if files are been processed and delivered', function () {
+    it('an image gets processed', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var transformed;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, (0, imageTransformer_1.transformeImage)(testInput.height, testInput.width, testInput.fileDirectory, testInput.inputFile, testInput.outputFile)];
+                case 1:
+                    transformed = _a.sent();
+                    expect(transformed).toBeTruthy();
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('an image has been safed', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var exists;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, (0, fileChecker_1.checkFileExists)(testInput.fileDirectory, testInput.outputFile)];
+                case 1:
+                    exists = _a.sent();
+                    expect(exists).toBeTruthy();
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    // Teardown test image
+    afterAll(function () { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, fs_1.promises.unlink("".concat(testInput.fileDirectory, "/").concat(testInput.outputFile))];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+});
+describe('Test error handling of transformer', function () {
+    it('returns false if image has not been transformed ', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var transformed;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, (0, imageTransformer_1.transformeImage)(testInput.height, -1, "test", testInput.inputFile, "test")];
+                case 1:
+                    transformed = _a.sent();
+                    expect(transformed).toEqual(false);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+});
