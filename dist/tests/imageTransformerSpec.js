@@ -73,7 +73,7 @@ var Input = /** @class */ (function () {
     };
     return Input;
 }());
-var testInput = new Input;
+var testInput = new Input();
 describe('Test if files are been processed and delivered', function () {
     it('an image gets processed', function () { return __awaiter(void 0, void 0, void 0, function () {
         var transformed;
@@ -116,7 +116,7 @@ describe('Test error handling of transformer', function () {
         var transformed;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, (0, imageTransformer_1.transformeImage)(testInput.height, -1, "test", testInput.inputFile, "test")];
+                case 0: return [4 /*yield*/, (0, imageTransformer_1.transformeImage)(testInput.height, -1, 'test', testInput.inputFile, 'test')];
                 case 1:
                     transformed = _a.sent();
                     expect(transformed).toEqual(false);

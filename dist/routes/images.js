@@ -67,7 +67,7 @@ var fileChecker_1 = require("../utilities/fileChecker");
 var images = express_1.default.Router();
 // Get rout for image url
 images.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var height, width, filename, fileDirectory, inputFile, outputFile, exists, transformed;
+    var height, width, filename, fileDirectory, inputFile, outputFile, inputExists, outputExists, transformed;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -79,38 +79,61 @@ images.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, f
                 outputFile = "".concat(filename, "_").concat(width, "_").concat(height, ".jpg");
                 return [4 /*yield*/, (0, fileChecker_1.checkFileExists)(fileDirectory, inputFile)];
             case 1:
-                exists = _a.sent();
-                if (!exists) return [3 /*break*/, 6];
-                if (!(width === null || height === null)) return [3 /*break*/, 2];
-                res.status(400).send("400 - Bad Request. Please set query parameters for width and height");
-                return [3 /*break*/, 5];
+                inputExists = _a.sent();
+                return [4 /*yield*/, (0, fileChecker_1.checkFileExists)(fileDirectory, outputFile)];
             case 2:
-                if (!(width < 0 || height < 0)) return [3 /*break*/, 3];
-                res.status(400).send("400 - Bad Request. Parameters for width and height must be positive");
-                return [3 /*break*/, 5];
-            case 3: return [4 /*yield*/, (0, imageTransformer_1.transformeImage)(height, width, fileDirectory, inputFile, outputFile)];
+                outputExists = _a.sent();
+                if (!inputExists) return [3 /*break*/, 8];
+                if (!(width === null || height === null)) return [3 /*break*/, 3];
+                res
+                    .status(400)
+                    .send('400 - Bad Request. Please set query parameters for width and height');
+                return [3 /*break*/, 7];
+            case 3:
+                if (!(width < 0 || height < 0)) return [3 /*break*/, 4];
+                res
+                    .status(400)
+                    .send('400 - Bad Request. Parameters for width and height must be positive');
+                return [3 /*break*/, 7];
             case 4:
+                if (!outputExists) return [3 /*break*/, 5];
+                console.log('served file from cache');
+                res
+                    .status(200)
+                    .set('Cache-Control', 'public, max-age=900000')
+                    .cookie('cookie_name', "friends", { maxAge: 900000 })
+                    .sendFile(outputFile, { root: fileDirectory }, function (err) {
+                    res.status(500);
+                    res.end();
+                    if (err)
+                        throw err;
+                });
+                return [3 /*break*/, 7];
+            case 5: return [4 /*yield*/, (0, imageTransformer_1.transformeImage)(height, width, fileDirectory, inputFile, outputFile)];
+            case 6:
                 transformed = _a.sent();
                 if (transformed) {
-                    res.status(200)
+                    console.log('new file created');
+                    res
+                        .status(200)
                         .set('Cache-Control', 'public, max-age=900000')
                         .cookie('cookie_name', "friends", { maxAge: 900000 })
                         .sendFile(outputFile, { root: fileDirectory }, function (err) {
                         res.status(500);
                         res.end();
                         if (err)
-                            throw (err);
+                            throw err;
                     });
                 }
                 else {
-                    res.status(500).send("500 - Internal Server Error");
+                    res.status(500).send('500 - Internal Server Error');
                 }
-                _a.label = 5;
-            case 5: return [3 /*break*/, 7];
-            case 6:
-                res.status(400).send("400 - Bad Request. File not found, check filename");
                 _a.label = 7;
-            case 7: return [2 /*return*/];
+            case 7: return [3 /*break*/, 9];
+            case 8:
+                res.status(400).send('400 - Bad Request. File not found, check filename');
+                _a.label = 9;
+            case 9: return [2 /*return*/];
         }
     });
 }); });

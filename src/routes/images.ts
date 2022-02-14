@@ -8,22 +8,25 @@ import { checkFileExists } from '../utilities/fileChecker';
 const images = express.Router();
 
 // Get rout for image url
-images.get('/',async (req:express.Request, res:express.Response):Promise<void> => {
+images.get(
+  '/',
+  async (req: express.Request, res: express.Response): Promise<void> => {
     // get query params
     const height: number | null =
-      parseInt(req.query.height as unknown as string) || null;
+      parseInt((req.query.height as unknown) as string) || null;
     const width: number | null =
-      parseInt(req.query.width as unknown as string) || null;
+      parseInt((req.query.width as unknown) as string) || null;
     const filename: string = req.query.filename as string;
 
     // set path and name for files
     const fileDirectory: string = path.join(process.cwd(), `/images/`);
     const inputFile: string = `${filename}.jpg` as string;
     const outputFile: string = `${filename}_${width}_${height}.jpg` as string;
-    const exists = await checkFileExists(fileDirectory, inputFile);
+    const inputExists = await checkFileExists(fileDirectory, inputFile);
+    const outputExists = await checkFileExists(fileDirectory, outputFile);
 
     // send server response for route
-    if (exists) {
+    if (inputExists) {
       if (width === null || height === null) {
         res
           .status(400)
@@ -36,6 +39,17 @@ images.get('/',async (req:express.Request, res:express.Response):Promise<void> =
           .send(
             '400 - Bad Request. Parameters for width and height must be positive'
           );
+      } else if (outputExists) {
+        console.log('served file from cache');
+        res
+          .status(200)
+          .set('Cache-Control', 'public, max-age=900000')
+          .cookie('cookie_name', `friends`, { maxAge: 900000 })
+          .sendFile(outputFile, { root: fileDirectory }, err => {
+            res.status(500);
+            res.end();
+            if (err) throw err;
+          });
       } else {
         const transformed = await transformeImage(
           height,
@@ -45,11 +59,12 @@ images.get('/',async (req:express.Request, res:express.Response):Promise<void> =
           outputFile
         );
         if (transformed) {
+          console.log('new file created');
           res
             .status(200)
             .set('Cache-Control', 'public, max-age=900000')
             .cookie('cookie_name', `friends`, { maxAge: 900000 })
-            .sendFile(outputFile, { root: fileDirectory }, (err) => {
+            .sendFile(outputFile, { root: fileDirectory }, err => {
               res.status(500);
               res.end();
               if (err) throw err;

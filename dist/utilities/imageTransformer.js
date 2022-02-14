@@ -52,10 +52,7 @@ var transformeImage = function (height, width, directory, inputFile, outputFile)
             case 1:
                 image = _a.sent();
                 // resize
-                return [4 /*yield*/, image.resize(width, height)
-                        .toFile("".concat(directory, "/").concat(outputFile))
-                    // containing a scaled and cropped version of input.jpg
-                ]; // containing a scaled and cropped version of input.jpg
+                return [4 /*yield*/, image.resize(width, height).toFile("".concat(directory, "/").concat(outputFile))];
             case 2:
                 // resize
                 _a.sent(); // containing a scaled and cropped version of input.jpg

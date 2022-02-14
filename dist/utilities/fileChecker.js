@@ -39,14 +39,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkFileExists = void 0;
 var fs_1 = require("fs");
 var checkFileExists = function (directory, inputFile) { return __awaiter(void 0, void 0, void 0, function () {
-    var imageResponse, error_1;
+    var error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 return [4 /*yield*/, fs_1.promises.open("".concat(directory, "/").concat(inputFile), 'r')];
             case 1:
-                imageResponse = _a.sent();
+                _a.sent();
                 return [2 /*return*/, true];
             case 2:
                 error_1 = _a.sent();

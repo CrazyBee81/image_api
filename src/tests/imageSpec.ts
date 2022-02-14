@@ -4,7 +4,6 @@ import app from '../server';
 const request = supertest(app);
 
 describe('Test endpoint response status', () => {
-
   it('gets the api endpoint', async () => {
     const response = await request.get('/api');
     expect(response.status).toBe(200);
