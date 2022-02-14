@@ -8,9 +8,7 @@ import { checkFileExists } from '../utilities/fileChecker';
 const images = express.Router();
 
 // Get rout for image url
-images.get(
-  '/',
-  async (req: express.Request, res: express.Response): Promise<void> => {
+images.get('/',async (req:express.Request, res:express.Response):Promise<void> => {
     // get query params
     const height: number | null =
       parseInt(req.query.height as unknown as string) || null;

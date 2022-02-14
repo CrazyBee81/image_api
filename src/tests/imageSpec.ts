@@ -1,13 +1,10 @@
 import supertest from 'supertest';
 import app from '../server';
-import { promises as fsPromises } from 'fs';
-import sharp from 'sharp';
 import * as path from 'path';
 
 const request = supertest(app);
 
 describe('Test endpoint response status', () => {
-  const fileDirectory: string = path.join(process.cwd(), `/images/`);
 
   it('gets the api endpoint', async () => {
     const response = await request.get('/api');

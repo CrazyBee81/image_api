@@ -2,8 +2,6 @@
 import express from 'express';
 import routes from './routes/index';
 
-const test = "fest";
-
 // Start up an instance of app
 const app = express();
 
