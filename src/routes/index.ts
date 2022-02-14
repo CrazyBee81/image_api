@@ -6,11 +6,10 @@ import images from './images';
 const routes = express.Router();
 
 // Get main route
-routes.get('/', (req, res) => {
-    res.send('main route');
+routes.get('/', (req: express.Request, res: express.Response):void => {
+  res.send('main route');
 });
 
-routes.use('/images', images)
-
+routes.use('/images', images);
 
 export default routes;
